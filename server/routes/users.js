@@ -3,16 +3,15 @@ const router = express.Router(); // creating a router
 const path = require("path");
 const fs = require("fs").promises;
 const { getFileContent} = require("../helper/util");
+const pathToUserData = path.join(__dirname, "..", "data", "users.json");
 
 router.get("/users", (req, res) => {
-  const pathToUserData = path.join(__dirname, "..", "data", "users.json");
   getFileContent(pathToUserData)
     .then((users) => res.send(users))
     .catch(() => res.status(404).json({ "message": "Requested resource not found" }));
 });
 
 router.get("/users/:id", (req, res) => {
-  const pathToUserData = path.join(__dirname, "..", "data", "users.json");
   getFileContent(pathToUserData)
     .then((users) => {
       const user = users.find((element) => element._id === req.params.id);
