@@ -8,7 +8,7 @@ router.get('/cards', (req, res) => {
   const pathToCardData = path.join(__dirname, '..', 'data', 'cards.json');
   getFileContent(pathToCardData)
     .then((cards) => res.send(cards))
-    .catch(() => res.status(500).json({ message: 'Requested resource not found' }));
+    .catch(() => res.status(500).json({ message: 'Internal Server Error' }));
 });
 
 router.get('/cards/:id', (req, res) => {
@@ -21,7 +21,7 @@ router.get('/cards/:id', (req, res) => {
         return res.send(card);
       }
       return res.status(404).json({ message: 'Card ID not found' });
-    }).catch(() => res.status(500).json({ message: 'Requested resource not found' }));
+    }).catch(() => res.status(500).json({ message: 'Internal Server Error' }));
 });
 
 module.exports = router;

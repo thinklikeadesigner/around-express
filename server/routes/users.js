@@ -9,7 +9,7 @@ const pathToUserData = path.join(__dirname, '..', 'data', 'users.json');
 router.get('/users', (req, res) => {
   getFileContent(pathToUserData)
     .then((users) => res.send(users))
-    .catch(() => res.status(500).json({ message: 'Requested resource not found' }));
+    .catch(() => res.status(500).json({ message: 'Internal Server Error' }));
 });
 
 router.get('/users/:id', (req, res) => {
@@ -21,7 +21,7 @@ router.get('/users/:id', (req, res) => {
       }
       return res.status(404).json({ message: 'User ID not found' });
     })
-    .catch(() => res.status(500).json({ message: 'Requested resource not found' }));
+    .catch(() => res.status(500).json({ message: 'Internal Server Error' }));
 });
 
 module.exports = router;
