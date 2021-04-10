@@ -32,7 +32,7 @@
     ],
     "description": "Log output to console"
   },
-  "Curl express user id": {
+  "curl express user id": {
     "scope": "javascript,typescript",
     "prefix": "curluserid",
     "body": [
@@ -40,9 +40,9 @@
     ],
     "description": "Log output to console"
   },
-  "Curl express user id test": {
+  "curl express user id test": {
     "scope": "javascript,typescript",
-    "prefix": "curltestuserid",
+    "prefix": "cid",
     "body": [
      "curl -v GET 'http://localhost:3000/users/1' | python -m json.tool"
     ],
