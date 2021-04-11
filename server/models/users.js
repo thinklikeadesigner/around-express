@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    required: false,
+    required: true,
     validate: {
       validator(v) {
         const re = /(http:\/\/|https:\/\/)(www.)?\S/gi;
@@ -26,4 +26,4 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('users', userSchema);
+module.exports = mongoose.model('user', userSchema);
