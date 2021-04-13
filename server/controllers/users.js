@@ -6,7 +6,7 @@ module.exports.getUsers = (req, res) => {
     .catch(() => res.status(500).send({ message: 'Error' }));
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res) => { // _id will become accessible
   const {
     name, about, avatar,
   } = req.body;
@@ -30,4 +30,31 @@ module.exports.getUserId = (req, res) => {
       return res.status(404).json({ message: 'User ID not found' });
     })
     .catch(() => res.status(500).json({ message: 'Internal Server Error' }));
+};
+
+module.exports.updateUser = (req, res) => {
+  const {
+    name, about,
+  } = req.body;
+  User.update({
+    name,
+    about,
+
+  });
+  // updating the name of the user found by _id
+  User.findByIdAndUpdate(req.params.id, { name, about })
+    .then((user) => res.send({ data: user }))
+    .catch((err) => res.status(500).send({ message: `Error is ${err}` }));
+};
+module.exports.updateAvatar = (req, res) => {
+  const { avatar } = req.body;
+  User.update({
+
+    avatar,
+
+  });
+  // updating the name of the user found by _id
+  User.findByIdAndUpdate(req.params.id, { avatar })
+    .then((user) => res.send({ data: user }))
+    .catch((err) => res.status(500).send({ message: `Error is ${err}` }));
 };

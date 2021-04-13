@@ -7,7 +7,6 @@ const userRouter = require('./routes/users');
 
 const { PORT = 3000 } = process.env;
 
-app.use(express.json());
 app.use((req, res, next) => {
   req.user = {
     _id: '5d8b8592978f8bd833ca8133',
@@ -16,6 +15,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(express.json());
 app.use(userRouter);
 app.use(cardRouter);
 app.use('/', (req, res) => {
