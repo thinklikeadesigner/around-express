@@ -6,8 +6,6 @@ const helmet = require('helmet');
 const app = express();
 const cardRouter = require('./routes/cards');
 const userRouter = require('./routes/users');
-// const ApiError = require('./utils/errorHandling/apiError');
-// const apiErrorHandler = require('./utils/errorHandling/apiError');
 
 const { PORT = 3000 } = process.env;
 
@@ -27,7 +25,6 @@ app.use(cardRouter);
 app.use('/', (req, res) => {
   res.status(404).send({ message: 'Requested resource not found' });
 });
-// ApiError.use(apiErrorHandler);
 
 mongoose.connect('mongodb://localhost:27017/aroundb', {
   useNewUrlParser: true,

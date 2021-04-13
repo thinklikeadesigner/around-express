@@ -1,4 +1,8 @@
-const { ERROR_CODE_NOT_FOUND, ERROR_CODE_CAST_ERROR, ERROR_CODE_INTERNAL_SERVER } = require('../constants');
+const {
+  ERROR_CODE_NOT_FOUND_404,
+  ERROR_CODE_CAST_ERROR_400,
+  ERROR_CODE_INTERNAL_SERVER_500,
+} = require('../utils/constants');
 
 class ApiError {
   constructor(code, message) {
@@ -7,15 +11,15 @@ class ApiError {
   }
 
   static castError(msg) {
-    return new ApiError(ERROR_CODE_CAST_ERROR, msg);
+    return new ApiError(ERROR_CODE_CAST_ERROR_400, msg);
   }
 
   static notFound(msg) {
-    return new ApiError(ERROR_CODE_NOT_FOUND, msg);
+    return new ApiError(ERROR_CODE_NOT_FOUND_404, msg);
   }
 
   static internalServerError(msg) {
-    return new ApiError(ERROR_CODE_INTERNAL_SERVER, msg);
+    return new ApiError(ERROR_CODE_INTERNAL_SERVER_500, msg);
   }
 }
 
@@ -32,7 +36,7 @@ function apiErrorHandler(err, req, res, next) {
     res.status(err.code).json(err.message);
     return;
   }
-  res.status(500).json('something went wrong');
+  res.status(500).json({ message: 'Internal server error' });
   next();
 }
 
