@@ -1,18 +1,17 @@
 const User = require('../models/users');
 
+const { ERROR_CODE_NOT_FOUND_404, ERROR_CODE_CAST_ERROR_400, ERROR_CODE_INTERNAL_SERVER_500 } = require('../utils/constants');
+
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((err) => {
-      const ERROR_CODE = 500;
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).json(
-          {
-            message: 'Internal Server Error',
-          },
-        );
+        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid ID error ${err}` });
+      } else if (err.name === 'ValidationError') {
+        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid data error ${err}` });
       }
-      return res.send({ message: 'something went wrong' });
+      res.status(ERROR_CODE_INTERNAL_SERVER_500).json({ message: 'Internal server error' });
     });
 };
 
@@ -29,15 +28,12 @@ module.exports.createUser = (req, res) => { // _id will become accessible
   })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      const ERROR_CODE = 500;
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).json(
-          {
-            message: 'Internal Server Error',
-          },
-        );
+        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid ID error ${err}` });
+      } else if (err.name === 'ValidationError') {
+        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid data error ${err}` });
       }
-      return res.send({ message: 'something went wrong' });
+      res.status(ERROR_CODE_INTERNAL_SERVER_500).json({ message: 'Internal server error' });
     });
 };
 
@@ -47,18 +43,15 @@ module.exports.getUserId = (req, res) => {
       if (user) {
         return res.send(user);
       }
-      return res.status(404).json({ message: 'User ID not found' });
+      return res.status(ERROR_CODE_NOT_FOUND_404).json({ message: 'User ID not found' });
     })
     .catch((err) => {
-      const ERROR_CODE = 500;
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).json(
-          {
-            message: 'Internal Server Error',
-          },
-        );
+        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid ID error ${err}` });
+      } else if (err.name === 'ValidationError') {
+        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid data error ${err}` });
       }
-      return res.send({ message: 'something went wrong' });
+      res.status(ERROR_CODE_INTERNAL_SERVER_500).json({ message: 'Internal server error' });
     });
 };
 
@@ -72,39 +65,41 @@ module.exports.updateUser = (req, res) => {
 
   });
   // updating the name of the user found by _id
-  User.findByIdAndUpdate(req.params.id, { name, about })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      const ERROR_CODE = 500;
-      if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).json(
-          {
-            message: 'Internal Server Error',
-          },
-        );
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+    .then((user) => {
+      if (!user) {
+        res.status(ERROR_CODE_NOT_FOUND_404).json({ message: 'User ID not found' });
       }
-      return res.send({ message: 'something went wrong' });
+      return res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid ID error ${err}` });
+      } else if (err.name === 'ValidationError') {
+        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid data error ${err}` });
+      }
+      res.status(ERROR_CODE_INTERNAL_SERVER_500).json({ message: 'Internal server error' });
     });
 };
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
   User.update({
-
     avatar,
-
   });
   // updating the name of the user found by _id
-  User.findByIdAndUpdate(req.params.id, { avatar })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      const ERROR_CODE = 500;
-      if (err.name === 'CastError') {
-        return res.status(ERROR_CODE).json(
-          {
-            message: 'Internal Server Error',
-          },
-        );
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+    .then((user) => {
+      if (!user) {
+        res.status(ERROR_CODE_NOT_FOUND_404).json({ message: 'User ID not found' });
       }
-      return res.send({ message: 'something went wrong' });
+      res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid ID error ${err}` });
+      } else if (err.name === 'ValidationError') {
+        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid data error ${err}` });
+      }
+      res.status(ERROR_CODE_INTERNAL_SERVER_500).json({ message: 'Internal server error' });
     });
 };
