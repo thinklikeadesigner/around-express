@@ -71,9 +71,9 @@ module.exports.likeCard = (req, res) => {
       new: true,
     },
   )
-    .then((card) => {
-      if (card) {
-        return res.send(card);
+    .then((likes) => {
+      if (likes) {
+        return res.send(likes);
       }
       return res.status(404).json({ message: 'Card ID not found' });
     })
@@ -102,9 +102,9 @@ module.exports.dislikeCard = (req, res) => {
       new: true,
     },
   )
-    .then((card) => {
-      if (card) {
-        return res.send(card);
+    .then((likes) => {
+      if (likes) {
+        return res.send(likes);
       }
       return res.status(404).json({ message: 'Card ID not found' });
     })
