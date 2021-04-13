@@ -3,7 +3,17 @@ const User = require('../models/users');
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: 'Error' }));
+    .catch((err) => {
+      const ERROR_CODE = 500;
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).json(
+          {
+            message: 'Internal Server Error',
+          },
+        );
+      }
+      return res.send({ message: 'something went wrong' });
+    });
 };
 
 module.exports.createUser = (req, res) => { // _id will become accessible
@@ -18,7 +28,17 @@ module.exports.createUser = (req, res) => { // _id will become accessible
 
   })
     .then((user) => res.send({ data: user }))
-    .catch((error) => res.status(500).send({ message: `Error creating user ${error}` }));
+    .catch((err) => {
+      const ERROR_CODE = 500;
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).json(
+          {
+            message: 'Internal Server Error',
+          },
+        );
+      }
+      return res.send({ message: 'something went wrong' });
+    });
 };
 
 module.exports.getUserId = (req, res) => {
@@ -29,7 +49,17 @@ module.exports.getUserId = (req, res) => {
       }
       return res.status(404).json({ message: 'User ID not found' });
     })
-    .catch(() => res.status(500).json({ message: 'Internal Server Error' }));
+    .catch((err) => {
+      const ERROR_CODE = 500;
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).json(
+          {
+            message: 'Internal Server Error',
+          },
+        );
+      }
+      return res.send({ message: 'something went wrong' });
+    });
 };
 
 module.exports.updateUser = (req, res) => {
@@ -44,7 +74,17 @@ module.exports.updateUser = (req, res) => {
   // updating the name of the user found by _id
   User.findByIdAndUpdate(req.params.id, { name, about })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: `Error is ${err}` }));
+    .catch((err) => {
+      const ERROR_CODE = 500;
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).json(
+          {
+            message: 'Internal Server Error',
+          },
+        );
+      }
+      return res.send({ message: 'something went wrong' });
+    });
 };
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
@@ -56,5 +96,15 @@ module.exports.updateAvatar = (req, res) => {
   // updating the name of the user found by _id
   User.findByIdAndUpdate(req.params.id, { avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: `Error is ${err}` }));
+    .catch((err) => {
+      const ERROR_CODE = 500;
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).json(
+          {
+            message: 'Internal Server Error',
+          },
+        );
+      }
+      return res.send({ message: 'something went wrong' });
+    });
 };
