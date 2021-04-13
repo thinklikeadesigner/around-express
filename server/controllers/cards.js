@@ -1,7 +1,3 @@
-/*
-https://snipboard.io/O4QNvJ.jpg When making a request with a not valid id, the server should return status 400 instead of ERROR_CODE_INTERNAL_SERVER_500. For example, DELETE http://localhost:3000/cards/notvalid. CastErrors should return status 400.
-*/
-
 const Card = require('../models/cards');
 const {
   ERROR_CODE_NOT_FOUND_404,
