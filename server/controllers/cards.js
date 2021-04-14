@@ -38,7 +38,7 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.getCardId = (req, res) => {
-  Card.findById(req.params.id)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         ApiError.notFound(res, 'Card ID not found');
