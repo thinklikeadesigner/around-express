@@ -1,17 +1,16 @@
+const ApiError = require('../errors/api-error');
 const User = require('../models/users');
-
-const { ERROR_CODE_NOT_FOUND_404, ERROR_CODE_CAST_ERROR_400, ERROR_CODE_INTERNAL_SERVER_500 } = require('../utils/constants');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid ID error ${err}` });
+        ApiError.castError(res, 'Invalid ID error');
       } else if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid data error ${err}` });
+        ApiError.castError(res, 'Invalid data error');
       }
-      res.status(ERROR_CODE_INTERNAL_SERVER_500).json({ message: 'Internal server error' });
+      ApiError.internalServerError(res, 'Internal server error');
     });
 };
 
@@ -19,39 +18,38 @@ module.exports.createUser = (req, res) => { // _id will become accessible
   const {
     name, about, avatar,
   } = req.body;
-
   User.create({
     name,
     about,
     avatar,
-
   })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid ID error ${err}` });
+        ApiError.castError(res, 'Invalid ID error');
       } else if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid data error ${err}` });
+        ApiError.castError(res, 'Invalid data error');
       }
-      res.status(ERROR_CODE_INTERNAL_SERVER_500).json({ message: 'Internal server error' });
+      ApiError.internalServerError(res, 'Internal server error');
     });
 };
 
 module.exports.getUserId = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
-      if (user) {
-        return res.send(user);
+      if (!user) {
+        ApiError.notFound(res, 'User ID not found');
+        return;
       }
-      return res.status(ERROR_CODE_NOT_FOUND_404).json({ message: 'User ID not found' });
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid ID error ${err}` });
+        ApiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid data error ${err}` });
+        ApiError.validationError(res, 'Invalid data error');
       }
-      res.status(ERROR_CODE_INTERNAL_SERVER_500).json({ message: 'Internal server error' });
+      ApiError.internalServerError(res, 'Internal server error');
     });
 };
 
@@ -62,23 +60,22 @@ module.exports.updateUser = (req, res) => {
   User.update({
     name,
     about,
-
   });
-  // updating the name of the user found by _id
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(ERROR_CODE_NOT_FOUND_404).json({ message: 'User ID not found' });
+        ApiError.notFound(res, 'User ID not found');
+        return;
       }
-      return res.send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid ID error ${err}` });
+        ApiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid data error ${err}` });
+        ApiError.validationError(res, 'Invalid data error');
       }
-      res.status(ERROR_CODE_INTERNAL_SERVER_500).json({ message: 'Internal server error' });
+      ApiError.internalServerError(res, 'Internal server error');
     });
 };
 module.exports.updateAvatar = (req, res) => {
@@ -86,20 +83,20 @@ module.exports.updateAvatar = (req, res) => {
   User.update({
     avatar,
   });
-  // updating the name of the user found by _id
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        res.status(ERROR_CODE_NOT_FOUND_404).json({ message: 'User ID not found' });
+        ApiError.notFound(res, 'User ID not found');
+        return;
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid ID error ${err}` });
+        ApiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE_CAST_ERROR_400).json({ message: `Invalid data error ${err}` });
+        ApiError.validationError(res, 'Invalid data error');
       }
-      res.status(ERROR_CODE_INTERNAL_SERVER_500).json({ message: 'Internal server error' });
+      ApiError.internalServerError(res, 'Internal server error');
     });
 };

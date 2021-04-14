@@ -1,26 +1,16 @@
+const ApiError = require('../errors/api-error');
 const Card = require('../models/cards');
-const {
-  ERROR_CODE_NOT_FOUND_404,
-  ERROR_CODE_CAST_ERROR_400,
-  ERROR_CODE_INTERNAL_SERVER_500,
-} = require('../utils/constants');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res
-          .status(ERROR_CODE_CAST_ERROR_400)
-          .json({ message: `Invalid ID error ${err}` });
+        ApiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        res
-          .status(ERROR_CODE_CAST_ERROR_400)
-          .json({ message: `Invalid data error ${err}` });
+        ApiError.validationError(res, 'Invalid data error');
       }
-      res
-        .status(ERROR_CODE_INTERNAL_SERVER_500)
-        .json({ message: 'Internal server error' });
+      ApiError.internalServerError(res, 'Internal server error');
     });
 };
 
@@ -39,17 +29,11 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res
-          .status(ERROR_CODE_CAST_ERROR_400)
-          .json({ message: `Invalid ID error ${err}` });
+        ApiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        res
-          .status(ERROR_CODE_CAST_ERROR_400)
-          .json({ message: `Invalid data error ${err}` });
+        ApiError.validationError(res, 'Invalid data error');
       }
-      res
-        .status(ERROR_CODE_INTERNAL_SERVER_500)
-        .json({ message: 'Internal server error' });
+      ApiError.internalServerError(res, 'Internal server error');
     });
 };
 
@@ -57,25 +41,18 @@ module.exports.getCardId = (req, res) => {
   Card.findById(req.params.id)
     .then((card) => {
       if (!card) {
-        return res
-          .status(ERROR_CODE_NOT_FOUND_404)
-          .json({ message: 'Card ID not found' });
+        ApiError.notFound(res, 'Card ID not found');
+        return;
       }
-      return res.send(card);
+      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res
-          .status(ERROR_CODE_CAST_ERROR_400)
-          .json({ message: `Invalid ID error ${err}` });
+        ApiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        res
-          .status(ERROR_CODE_CAST_ERROR_400)
-          .json({ message: `Invalid data error ${err}` });
+        ApiError.validationError(res, 'Invalid data error');
       }
-      res
-        .status(ERROR_CODE_INTERNAL_SERVER_500)
-        .json({ message: 'Internal server error' });
+      ApiError.internalServerError(res, 'Internal server error');
     });
 };
 
@@ -90,25 +67,18 @@ module.exports.likeCard = (req, res) => {
   )
     .then((likes) => {
       if (!likes) {
-        return res
-          .status(ERROR_CODE_NOT_FOUND_404)
-          .json({ message: 'Owner ID not found' });
+        ApiError.notFound(res, 'Owner ID not found');
+        return;
       }
-      return res.status(200).send(likes);
+      res.status(200).send(likes);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res
-          .status(ERROR_CODE_CAST_ERROR_400)
-          .json({ message: `Invalid ID error ${err}` });
+        ApiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        res
-          .status(ERROR_CODE_CAST_ERROR_400)
-          .json({ message: `Invalid data error ${err}` });
+        ApiError.validationError(res, 'Invalid data error');
       }
-      res
-        .status(ERROR_CODE_INTERNAL_SERVER_500)
-        .json({ message: 'Internal server error' });
+      ApiError.internalServerError(res, 'Internal server error');
     });
 };
 
@@ -127,25 +97,18 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((likes) => {
       if (!likes) {
-        return res
-          .status(ERROR_CODE_NOT_FOUND_404)
-          .json({ message: 'Owner ID not found' });
+        ApiError.notFound(res, 'Owner ID not found');
+        return;
       }
-      return res.send(likes);
+      res.status(200).send(likes);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res
-          .status(ERROR_CODE_CAST_ERROR_400)
-          .json({ message: `Invalid ID error ${err}` });
+        ApiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        res
-          .status(ERROR_CODE_CAST_ERROR_400)
-          .json({ message: `Invalid data error ${err}` });
+        ApiError.validationError(res, 'Invalid data error');
       }
-      res
-        .status(ERROR_CODE_INTERNAL_SERVER_500)
-        .json({ message: 'Internal server error' });
+      ApiError.internalServerError(res, 'Internal server error');
     });
 };
 
@@ -153,26 +116,18 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        res
-          .status(ERROR_CODE_NOT_FOUND_404)
-          .json({ message: 'Card not found' });
+        ApiError.notFound(res, 'Card ID not found');
       } else if (!card.owner._id === req.user._id) {
-        res.status(403).json({ message: 'Forbidden. User Id is invalid' });
+        ApiError.forbidden(res, 'Forbidden. User Id is invalid');
       }
       res.status(200).json({ message: 'Card deleted' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res
-          .status(ERROR_CODE_CAST_ERROR_400)
-          .json({ message: `Invalid ID error ${err}` });
+        ApiError.castError(res, 'Invalid Card ID error');
       } else if (err.name === 'ValidationError') {
-        res
-          .status(ERROR_CODE_CAST_ERROR_400)
-          .json({ message: `Invalid data error ${err}` });
+        ApiError.validationError(res, 'Invalid data error');
       }
-      res
-        .status(ERROR_CODE_INTERNAL_SERVER_500)
-        .json({ message: 'Internal server error' });
+      ApiError.internalServerError(res, 'Internal server error');
     });
 };
